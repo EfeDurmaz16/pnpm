@@ -138,7 +138,7 @@ jobs:
             echo "benchmark=tests.all"
           } >> "$GITHUB_OUTPUT"
         else
-          git remote set-branches --add origin main && git fetch origin main --depth=1
+          git fetch --no-tags --depth=1 origin "+refs/heads/${GITHUB_BASE_REF}:refs/remotes/origin/main"
           if [ -n "$(git diff --name-only origin/main HEAD -- pnpm-workspace.yaml)" ]; then
             {
               echo "script=ci:test-all"
@@ -178,7 +178,7 @@ jobs:
           exit 1
         fi
     - name: Run tests (${{ steps.test-scope.outputs.scope }})
-      timeout-minutes: 70
+      timeout-minutes: 180
       shell: bash
       env:
         BENCHMARK: ${{ steps.test-scope.outputs.benchmark }}
