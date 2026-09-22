@@ -27,7 +27,7 @@ concurrency:
 jobs:
   changes:
     name: Rust CI / Detect Changes
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     outputs:
       rust: ${{ steps.manual.outputs.rust || steps.filter.outputs.rust }}
       changesets: ${{ steps.filter.outputs.changesets }}
@@ -79,7 +79,7 @@ jobs:
     name: Rust CI / Change Check
     needs: changes
     if: ${{ !cancelled() && (needs.changes.outputs.rust == 'true' || needs.changes.outputs.changesets == 'true') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -113,11 +113,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: blacksmith-8vcpu-windows-2025
+          - os: windows-2025
             os_label: windows
-          - os: blacksmith-8vcpu-ubuntu-2404
+          - os: ubuntu-24.04
             os_label: ubuntu
-          - os: blacksmith-12vcpu-macos-latest
+          - os: macos-15
             os_label: macos
     runs-on: ${{ matrix.os }}
     # Backstop for hangs outside nextest's per-test terminate-after
@@ -125,7 +125,7 @@ jobs:
     # in ~5 minutes, cold-cache rebuilds of the full workspace need the
     # rest of the hour. Without this, a wedged job runs on the default
     # 360-minute limit.
-    timeout-minutes: 60
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -277,9 +277,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: blacksmith-4vcpu-ubuntu-2404
+          - os: ubuntu-24.04
             os_label: ubuntu
-          - os: blacksmith-4vcpu-windows-2025
+          - os: windows-2025
             os_label: windows
     runs-on: ${{ matrix.os }}
     steps:
@@ -313,7 +313,7 @@ jobs:
     name: Rust CI / Doc
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.rust == 'true') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -346,11 +346,11 @@ jobs:
           # and runs a shebang-less bin, and those are where the platforms
           # differ. Windows runs neither, so those tests skip themselves there;
           # macOS reaches them through a BSD `sh`, `readlink`, and `dirname`.
-          - os: blacksmith-4vcpu-ubuntu-2404
+          - os: ubuntu-24.04
             os_label: ubuntu
-          - os: blacksmith-12vcpu-macos-latest
+          - os: macos-15
             os_label: macos
-          - os: blacksmith-8vcpu-windows-2025
+          - os: windows-2025
             os_label: windows
     runs-on: ${{ matrix.os }}
     steps:
@@ -405,7 +405,7 @@ jobs:
     name: Rust CI / Spell Check
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.rust == 'true') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -419,7 +419,7 @@ jobs:
     name: Rust CI / Cargo Deny
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.rust == 'true') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -462,7 +462,7 @@ jobs:
     name: Rust CI / Format
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.rust == 'true') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -509,7 +509,7 @@ jobs:
     name: Rust CI / Dylint
     needs: changes
     if: ${{ always() && !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.rust == 'true' || needs.changes.result != 'success') }}
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - name: Verify change detection
         if: ${{ needs.changes.result != 'success' }}
@@ -608,7 +608,7 @@ jobs:
       - deny
       - format
       - dylint
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - name: Fail if any dependency failed or was cancelled
         if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
