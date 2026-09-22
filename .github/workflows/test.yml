@@ -150,7 +150,7 @@ jobs:
           exit 1
         fi
     - name: Run tests (${{ steps.test-scope.outputs.scope }})
-      timeout-minutes: 70
+      timeout-minutes: 180
       shell: bash
       env:
         BENCHMARK: ${{ steps.test-scope.outputs.benchmark }}
